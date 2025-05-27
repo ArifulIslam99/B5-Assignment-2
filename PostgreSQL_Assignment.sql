@@ -1,6 +1,10 @@
 -- Active: 1747992694221@@127.0.0.1@5432@b5a2@public
 CREATE DATABASE B5A2;
 
+DROP Table rangers;
+DROP Table species;
+DROP Table sightings;
+
 CREATE TABLE rangers(
     ranger_id SERIAL PRIMARY KEY,
     "name"  VARCHAR (50) NOT NULL,
@@ -12,7 +16,7 @@ CREATE TABLE species(
     common_name  VARCHAR (50) NOT NULL,
     scientific_name VARCHAR(50) NOT NULL UNIQUE,
     discovery_date TIMESTAMP NOT NULL,
-    conservation_status VARCHAR(20) CHECK (conservation_status IN ('Endangered', 'Vulnerable'))
+    conservation_status VARCHAR(20)
 );
 
 CREATE TABLE sightings(
@@ -43,9 +47,6 @@ INSERT INTO sightings (species_id, ranger_id, location, sighting_time, notes) VA
 (3, 3, 'Bamboo Grove East', '2024-05-15 09:10:00', 'Feeding observed'),
 (1, 2, 'Snowfall Pass',     '2024-05-18 18:30:00', NULL);
 
-
-
-DROP Table rangers;
 
 SELECT * from rangers;
 
@@ -86,5 +87,40 @@ SELECT common_name, sighting_time, name from sightings
     ORDER BY sighting_time DESC
     LIMIT 2
 ;
+
+
+--  PROBLEM 7
+
+UPDATE species
+SET conservation_status = 'Historic'
+Where extract(YEAR from discovery_date) < 1800;
+
+--  PROBLEM 8
+
+CREATE OR REPLACE FUNCTION get_time_of_day(ts TIMESTAMP)
+RETURNS TEXT  
+LANGUAGE plpgsql
+AS
+$$
+BEGIN
+    IF EXTRACT(HOUR FROM ts) < 12 THEN
+        RETURN 'Morning';
+    ELSIF EXTRACT(HOUR FROM ts) BETWEEN 12 AND 17 THEN
+        RETURN 'Afternoon';
+    ELSE
+        RETURN 'Evening';
+    END IF;
+END;
+$$;
+
+SELECT sighting_id, get_time_of_day(sighting_time) as time_of_day  FROM sightings;
+
+
+--  PROBLEM 9
+
+DELETE FROM rangers 
+    WHERE rangers.ranger_id NOT IN 
+        (SELECT DISTINCT ranger_id from sightings);
+
 
 
