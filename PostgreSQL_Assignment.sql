@@ -23,8 +23,8 @@ CREATE TABLE sightings(
     sighting_id SERIAL PRIMARY KEY,
     ranger_id  INTEGER REFERENCES rangers(ranger_id),
     species_id  INTEGER REFERENCES species(species_id),
-    sighting_time TIMESTAMP,
-    "location" TEXT,
+    sighting_time TIMESTAMP NOT NULL,
+    "location" TEXT NOT NULL,
     notes TEXT
 );
 
@@ -59,7 +59,9 @@ SELECT * from sightings;
 INSERT INTO rangers ("name", region) VALUES ('Derek Fox', 'Coastal Plains');
 
 --  PROBLEM 2
-SELECT DISTINCT count(*) as unique_species_count  from species;
+SELECT Count(DISTINCT sightings.species_id) AS unique_species_count
+FROM sightings;
+
 
 --  PROBLEM 3
 SELECT * from sightings
