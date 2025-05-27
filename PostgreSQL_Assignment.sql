@@ -54,5 +54,37 @@ SELECT * from species;
 SELECT * from sightings;
 
 
+--  PROBLEM 1 
+INSERT INTO rangers ("name", region) VALUES ('Derek Fox', 'Coastal Plains');
+
+--  PROBLEM 2
+SELECT DISTINCT count(*) as unique_species_count  from species;
+
+--  PROBLEM 3
+SELECT * from sightings
+    WHERE "location" LIKE '%Pass%';
+
+
+--  PROBLEM 4
+SELECT "name", count(*) as total_sightings from rangers
+    Join sightings ON rangers.ranger_id = sightings.ranger_id
+    GROUP BY "name"
+;
+
+
+--  PROBLEM 5
+SELECT common_name from species
+    LEFT OUTER Join sightings ON species.species_id = sightings.species_id
+    WHERE sightings.species_id IS NULL;
+;
+
+
+--  PROBLEM 6
+SELECT common_name, sighting_time, name from sightings
+    Join rangers ON sightings.ranger_id = rangers.ranger_id
+    JOIN species On species.species_id = sightings.species_id
+    ORDER BY sighting_time DESC
+    LIMIT 2
+;
 
 
